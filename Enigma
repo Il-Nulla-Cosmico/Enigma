@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENTRA SE HAI IL CORAGGIO</title>
+    <style>
+        /* Stili Generali e Atmosfera Horror */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #e30b0b;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: 0 0 8px rgba(227, 11, 11, 0.6);
+        }
+
+        /* Contenitore Principale */
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Schermata Enigma */
+        #enigma-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .riddle-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            background: rgba(15, 15, 15, 0.8);
+            padding: 20px;
+            border: 1px dashed #e30b0b;
+            border-radius: 4px;
+        }
+
+        input[type="text"] {
+            background-color: #101010;
+            border: 1px solid #e30b0b;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-family: inherit;
+            text-align: center;
+            outline: none;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 15px rgba(227, 11, 11, 0.8);
+        }
+
+        button {
+            background-color: #e30b0b;
+            color: #000000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #ff1c1c;
+            box-shadow: 0 0 20px rgba(255, 28, 28, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Messaggio di Errore */
+        #error-msg {
+            color: #ff3333;
+            margin-top: 15px;
+            min-height: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Schermata Video (Nascosta all'inizio) */
+        #video-screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            width: 100%;
+        }
+
+        video {
+            width: 100%;
+            max-width: 640px;
+            border: 2px solid #e30b0b;
+            box-shadow: 0 0 25px rgba(227, 11, 11, 0.4);
+            background-color: #000;
+        }
+
+        /* Animazioni */
+        @keyframes pulse {
+            0% { transform: scale(1); text-shadow: 0 0 8px rgba(227, 11, 11, 0.6); }
+            100% { transform: scale(1.02); text-shadow: 0 0 20px rgba(227, 11, 11, 0.9); }
+        }
+
+        /* Effetto terremoto se si sbaglia */
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="enigma-screen">
+            <h1>ACCESSO VINCOLATO</h1>
+            
+            <div class="riddle-text">
+                "Parlo senza bocca e sento senza orecchie. <br>
+                Non ho corpo, ma mi animo con il vento. <br>
+                Cosa sono?"
+            </div>
+
+            <input type="text" id="answer-input" placeholder="Inserisci la risposta..." autocomplete="off">
+            <button onclick="checkAnswer()">Invia</button>
+            <div id="error-msg"></div>
+        </div>
+
+        <div id="video-screen">
+            <video id="my-video" controls playsinline>
+                <source src="video.mp4" type="video/mp4">
+                Il tuo browser non supporta questo video.
+            </video>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURAZIONE ---
+        // Scrivi qui la risposta esatta (tutto in minuscolo per evitare problemi di maiuscole)
+        const SOLUZIONE_CORRETTA = "eco"; 
+
+        function checkAnswer() {
+            const inputField = document.getElementById('answer-input');
+            const errorMsg = document.getElementById('error-msg');
+            const enigmaScreen = document.getElementById('enigma-screen');
+            const videoScreen = document.getElementById('video-screen');
+            const videoElement = document.getElementById('my-video');
+            
+            // Pulizia input dell'utente (rimuove spazi vuoti e rende minuscolo)
+            const userAnswer = inputField.value.trim().toLowerCase();
+
+            if (userAnswer === SOLUZIONE_CORRETTA) {
+                // Scomparsa fluida della schermata enigma
+                enigmaScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    enigmaScreen.style.display = 'none';
+                    
+                    // Apparizione fluida della schermata video
+                    videoScreen.style.display = 'block';
+                    setTimeout(() => {
+                        videoScreen.style.opacity = '1';
+                        // Opzionale: avvia il video in automatico appena sbloccato (sui browser mobile potrebbe richiedere il muto)
+                        // videoElement.play(); 
+                    }, 50);
+                }, 1000);
+
+            } else {
+                // Risposta errata: effetto vibrazione e messaggio inquietante
+                errorMsg.innerText = "RISPOSTA ERRATA. Riprova... se hai tempo.";
+                enigmaScreen.classList.add('shake');
+                inputField.value = ''; // Pulisce il campo
+                
+                // Rimuove la classe shake dopo l'animazione per poterla riutilizzare
+                setTimeout(() => {
+                    enigmaScreen.classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        // Permette di premere "Invio" sulla tastiera per inviare la risposta
+        document.getElementById('answer-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
