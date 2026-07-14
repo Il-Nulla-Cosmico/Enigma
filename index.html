@@ -156,7 +156,7 @@
 
         <div id="video-screen">
             <video id="my-video" controls playsinline>
-                <source src="video.mp4" type="video/mp4">
+                <source src="Enigma/Enigma.mp4" type="video/mp4">
                 Il tuo browser non supporta questo video.
             </video>
         </div>
@@ -175,7 +175,7 @@
             const videoScreen = document.getElementById('video-screen');
             const videoElement = document.getElementById('my-video');
             
-            // Pulizia input dell'utente (rimuove spazi vuoti e rende minuscolo)
+            // Pulizia input dell'utente
             const userAnswer = inputField.value.trim().toLowerCase();
 
             if (userAnswer === SOLUZIONE_CORRETTA) {
@@ -189,18 +189,25 @@
                     videoScreen.style.display = 'block';
                     setTimeout(() => {
                         videoScreen.style.opacity = '1';
-                        // Opzionale: avvia il video in automatico appena sbloccato (sui browser mobile potrebbe richiedere il muto)
-                        // videoElement.play(); 
+                        
+                        // --- MODIFICA AUTOPLAY CON AUDIO ---
+                        // Avvia il video in automatico
+                        videoElement.play().catch(error => {
+                            console.log("Autoplay bloccato dal browser, provo senza audio:", error);
+                            // Se il browser fa ancora i capricci, lo avviamo mutato per sicurezza
+                            videoElement.muted = true;
+                            videoElement.play();
+                        });
+                        
                     }, 50);
                 }, 1000);
 
             } else {
-                // Risposta errata: effetto vibrazione e messaggio inquietante
+                // Risposta errata
                 errorMsg.innerText = "RISPOSTA ERRATA. Riprova... se hai tempo.";
                 enigmaScreen.classList.add('shake');
-                inputField.value = ''; // Pulisce il campo
+                inputField.value = '';
                 
-                // Rimuove la classe shake dopo l'animazione per poterla riutilizzare
                 setTimeout(() => {
                     enigmaScreen.classList.remove('shake');
                 }, 500);
